@@ -1,14 +1,6 @@
 import mysql.connector
 from mysql.connector import errorcode
 
-try:
-    cnx = mysql.connector.connect(user='armando',password='n0m3l0',host='54.81.81.169',database="Esquerro")
-    cnx2 = mysql.connector.connect(user='rey',password='n0m3l0',host='54.167.126.234',database="Esquerro")
-    pass
-except mysql.connector.Error as err:
-    print(err)
-
-
 class Usuario(object):
     """docstring for Usuario."""
 
@@ -16,17 +8,38 @@ class Usuario(object):
         self.nombre = nombre
         self.edad = edad
 
-
-
 def Menu():
     print("\t\t\t MENU")
     print("Que deseas hacer: ")
     print("1.Insertar un Usuario ")
     print("2.Replicar una base de datos \n")
 
-    opcion = input()
+    opcion = int(input(""))
 
-    switch
+    if opcion == 1 :
+        usuario = PedirUsuario();
+
+        if usuario.edad>30:
+            Distribuir(cnx2,usuario)
+        else :
+            Distribuir(cnx,usuario)
+    elif opcion == 2:
+        print("\t\t REPLICAR UNA BASE DE DATOS")
+        print("Que base de datos desea replicar")
+        print("1.Edad menor o igual a 30 años ")
+        print("2.Edad mayor a 30 años ")
+
+        condition = int(input(""))
+
+        if condition == 1:
+            Replica(cnx)
+        elif condition == 2:
+            Replica(cnx2)
+        else:
+            print("Esa no es una base de Datos Valida")
+    else:
+        print("Esa no es una opcion Valida")
+
 
 
 def PedirUsuario():
@@ -57,11 +70,16 @@ def Distribuir(cnx,usuario):
 
 def Replica(cnx):
     cursor = cnx.cursor()
-    no_usuario = str(cursor.lastrowid)
+    selectQ = ("Select max(id) From replica")
+
+    cursor.execute(selectQ)
+    for (id) in cursor:
+        idV = id
+        print("id :"+str(idV[0]))
     replicQ = ("INSERT INTO replica (id,nombre,edad) Select * From usuario u1 Where u1.id > %s")
 
     try:
-        cursor.execute(replicQ, (no_usuario,))
+        cursor.execute(replicQ, (idV[0],))
         print("Se ah replicado la base de datos")
         cnx.commit()
         pass
@@ -76,14 +94,14 @@ def Replica(cnx):
 
     print("Hello From Replicaaaaaaaa")
 
-# usuario = PedirUsuario();
-#
-# if usuario.edad>30:
-#     Distribuir(cnx2,usuario)
-# else :
-#     Distribuir(cnx,usuario)
+try:
+    cnx = mysql.connector.connect(user='armando',password='n0m3l0',host='54.81.81.169',database="Esquerro")
+    cnx2 = mysql.connector.connect(user='rey',password='n0m3l0',host='54.167.126.234',database="Esquerro")
+    pass
+except mysql.connector.Error as err:
+    print(err)
 
-#Replica(cnx2)
+Menu()
 
 
 cnx.close()
